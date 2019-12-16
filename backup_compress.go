@@ -21,9 +21,6 @@ func compress() {
 			// skip archive file
 			continue
 		}
-		if filepath.Base(p) == FullBackupStorageFile || filepath.Base(p) == IncBackupStorageFile {
-			continue
-		}
 		filePaths = append(filePaths, p)
 	}
 
@@ -47,8 +44,8 @@ func compress() {
 	}
 }
 
-func decompress(src,dist string) {
-	err:= archiver.Unarchive(src,dist)
+func decompress(src, dist string) {
+	err := archiver.Unarchive(src, dist)
 	if err != nil {
 		logrus.Fatal(err)
 	}
