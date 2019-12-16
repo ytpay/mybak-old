@@ -52,6 +52,13 @@ var showCmd = &cobra.Command{
 	Run:   func(cmd *cobra.Command, args []string) { showConfig() },
 }
 
+var compressCmd = &cobra.Command{
+	Use:   "compress",
+	Short: "compress backup file",
+	Long:  `compress backup file.`,
+	Run:   func(cmd *cobra.Command, args []string) { compress() },
+}
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "show version",
@@ -62,17 +69,15 @@ var versionCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initLog)
 	rootCmd.PersistentFlags().StringVar(&MySQLName, "name", "mysql", "mysql instance name")
-	rootCmd.PersistentFlags().StringVar(&User, "user", "", "backup user")
-	rootCmd.PersistentFlags().StringVar(&Password, "password", "", "backup user password")
 	rootCmd.PersistentFlags().StringVar(&Host, "host", "127.0.0.1", "mysql host")
 	rootCmd.PersistentFlags().StringVar(&Port, "port", "3306", "mysql port")
 	rootCmd.PersistentFlags().StringVar(&BackupDir, "backup-dir", "/data/mysql_backup", "backup dir")
-	rootCmd.PersistentFlags().StringVar(&FullBackupDirTpl, "full-backup-dir-tpl", "{{ .MySQLName }}-{{ 20060102150405 | now }}", "full backup dir template")
-	rootCmd.PersistentFlags().StringVar(&IncBackupDirTpl, "inc-backup-dir-tpl", "{{ .MySQLName }}-inc-{{ 20060102150405 | now }}", "incremental backup dir template")
+	rootCmd.PersistentFlags().StringVar(&FullBackupDirTpl, "full-backup-dir-tpl", `{{ .MySQLName }}-{{ "20060102150405" | now }}`, "full backup dir template")
+	rootCmd.PersistentFlags().StringVar(&IncBackupDirTpl, "inc-backup-dir-tpl", `{{ .MySQLName }}-inc-{{ "20060102150405" | now }}`, "incremental backup dir template")
 	rootCmd.PersistentFlags().StringVar(&FullBackupStorageFile, "full-backup-storage-file", ".full-backup", "full backup storage file")
 	rootCmd.PersistentFlags().StringVar(&IncBackupStorageFile, "inc-backup-storage-file", ".inc-backup", "incremental backup storage file")
 	rootCmd.PersistentFlags().BoolVar(&Debug, "debug", false, "debug mode")
-	rootCmd.AddCommand(fullCmd, incCmd, showCmd, versionCmd)
+	rootCmd.AddCommand(fullCmd, incCmd, showCmd, compressCmd, versionCmd)
 }
 
 func initLog() {

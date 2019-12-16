@@ -2,8 +2,9 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"strings"
+
+	"github.com/sirupsen/logrus"
 
 	"github.com/mritd/promptx"
 )
@@ -18,9 +19,11 @@ func showConfig() {
 	}, "Please input secret:")
 
 	if p.Run() == Secret {
-		fmt.Printf("mysql user: %s\n", User)
-		fmt.Printf("mysql password: %s\n", Password)
-		fmt.Printf("mysql host: %s\n", Host)
-		fmt.Printf("mysql port: %s\n", Port)
+		logrus.Infof("mysql user: %s\n", User)
+		logrus.Infof("mysql password: %s\n", Password)
+		logrus.Infof("mysql host: %s\n", Host)
+		logrus.Infof("mysql port: %s\n", Port)
+	} else {
+		logrus.Fatal("go fuck yourself")
 	}
 }

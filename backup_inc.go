@@ -2,19 +2,24 @@ package main
 
 import (
 	"bytes"
+	"fmt"
 	"io/ioutil"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 
 	"github.com/sirupsen/logrus"
 )
 
 func incBackup() {
-	targetDirTpl := template.New(IncBackupDirTpl).Funcs(map[string]interface{}{"now": now})
+	targetDirTpl, err := template.New("").Funcs(map[string]interface{}{"now": now}).Parse(IncBackupDirTpl)
+	if err != nil {
+		logrus.Fatal(err)
+	}
 	var buf bytes.Buffer
-	err := targetDirTpl.Execute(&buf, struct {
+	err = targetDirTpl.Execute(&buf, struct {
 		MySQLName string
 	}{
 		MySQLName: MySQLName,
@@ -56,18 +61,23 @@ func incBackup() {
 		incBaseDir = string(bs)
 	}
 
-	cmd := exec.Command("xtrabackup",
+	cmds := []string{
+		"xtrabackup",
 		"--backup",
 		"--dump-innodb-buffer-pool",
 		"--compress",
 		"--compress-threads=4",
-		"--user="+User,
-		"--password="+Password,
-		"--host="+Host,
-		"--port="+Port,
-		"--incremental-basedir="+incBaseDir,
-		"--target-dir="+backupDir)
+		"--user=" + User,
+		"--password=" + Password,
+		"--host=" + Host,
+		"--port=" + Port,
+		"--incremental-basedir=" + incBaseDir,
+		"--target-dir=" + backupDir,
+	}
 
+	logrus.Info(strings.Replace(fmt.Sprintf("backup commands: [%s]", strings.Join(cmds, " ")), Password, "********", -1))
+
+	cmd := exec.Command(cmds[0], cmds[1:]...)
 	cmd.Stdout = logrus.StandardLogger().Writer()
 	cmd.Stderr = logrus.StandardLogger().Writer()
 	cmd.Stdin = os.Stdin
