@@ -6,13 +6,12 @@ import (
 )
 
 var (
-	Debug                 bool
 	User                  string
 	Password              string
 	Host                  string
 	Port                  string
 	Secret                string
-	MySQLName             string
+	Prefix                string
 	BackupDir             string
 	FullBackupDirTpl      string
 	IncBackupDirTpl       string
@@ -22,6 +21,8 @@ var (
 	Version   string
 	BuildDate string
 	CommitID  string
+
+	compressClean bool
 )
 
 var rootCmd = &cobra.Command{
@@ -56,19 +57,18 @@ var compressCmd = &cobra.Command{
 	Use:   "compress",
 	Short: "compress backup file",
 	Long:  `compress backup file.`,
-	Run:   func(cmd *cobra.Command, args []string) { compress() },
+	Run:   func(cmd *cobra.Command, args []string) { compress(compressClean) },
 }
-
 
 var decompressCmd = &cobra.Command{
 	Use:   "decompress",
 	Short: "decompress backup file",
 	Long:  `decompress backup file.`,
-	Run:   func(cmd *cobra.Command, args []string) {
+	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 2 {
 			_ = cmd.Help()
-		}else {
-			decompress(args[0],args[1])
+		} else {
+			decompress(args[0], args[1])
 		}
 	},
 }
@@ -82,23 +82,19 @@ var versionCmd = &cobra.Command{
 
 func init() {
 	cobra.OnInitialize(initLog)
-	rootCmd.PersistentFlags().StringVar(&MySQLName, "name", "mysql", "mysql instance name")
 	rootCmd.PersistentFlags().StringVar(&Host, "host", "127.0.0.1", "mysql host")
 	rootCmd.PersistentFlags().StringVar(&Port, "port", "3306", "mysql port")
+	rootCmd.PersistentFlags().StringVar(&Prefix, "prefix", "mysql", "backup dir prefix")
 	rootCmd.PersistentFlags().StringVar(&BackupDir, "backup-dir", "/data/mysql_backup", "backup dir")
-	rootCmd.PersistentFlags().StringVar(&FullBackupDirTpl, "full-backup-dir-tpl", `{{ .MySQLName }}-{{ "20060102150405" | now }}`, "full backup dir template")
-	rootCmd.PersistentFlags().StringVar(&IncBackupDirTpl, "inc-backup-dir-tpl", `{{ .MySQLName }}-inc-{{ "20060102150405" | now }}`, "incremental backup dir template")
+	rootCmd.PersistentFlags().StringVar(&FullBackupDirTpl, "full-backup-dir-tpl", `{{ .Prefix }}-{{ "20060102150405" | now }}`, "full backup dir template")
+	rootCmd.PersistentFlags().StringVar(&IncBackupDirTpl, "inc-backup-dir-tpl", `{{ .Prefix }}-inc-{{ "20060102150405" | now }}`, "incremental backup dir template")
 	rootCmd.PersistentFlags().StringVar(&FullBackupStorageFile, "full-backup-storage-file", ".full-backup", "full backup storage file")
 	rootCmd.PersistentFlags().StringVar(&IncBackupStorageFile, "inc-backup-storage-file", ".inc-backup", "incremental backup storage file")
-	rootCmd.PersistentFlags().BoolVar(&Debug, "debug", false, "debug mode")
-	rootCmd.AddCommand(fullCmd, incCmd, showCmd, compressCmd,decompressCmd, versionCmd)
+	compressCmd.PersistentFlags().BoolVar(&compressClean, "clean", false, "clean files when compress success")
+	rootCmd.AddCommand(fullCmd, incCmd, showCmd, compressCmd, decompressCmd, versionCmd)
 }
 
 func initLog() {
-	if Debug {
-		logrus.SetLevel(logrus.DebugLevel)
-	}
-
 	logrus.SetFormatter(&logrus.TextFormatter{
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",

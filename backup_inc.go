@@ -20,9 +20,9 @@ func incBackup() {
 	}
 	var buf bytes.Buffer
 	err = targetDirTpl.Execute(&buf, struct {
-		MySQLName string
+		Prefix string
 	}{
-		MySQLName: MySQLName,
+		Prefix: Prefix,
 	})
 	if err != nil {
 		logrus.Fatal(err)

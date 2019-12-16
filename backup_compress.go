@@ -2,6 +2,7 @@ package main
 
 import (
 	"io/ioutil"
+	"os"
 	"path/filepath"
 
 	"github.com/sirupsen/logrus"
@@ -9,7 +10,7 @@ import (
 	"github.com/mholt/archiver"
 )
 
-func compress() {
+func compress(clean bool) {
 	var filePaths []string
 	paths, err := filepath.Glob(BackupDir + "/*")
 	if err != nil {
@@ -41,6 +42,14 @@ func compress() {
 	err = archiver.Archive(filePaths, targetFile)
 	if err != nil {
 		logrus.Fatal(err)
+	}
+	if clean {
+		for _, p := range filePaths {
+			err = os.RemoveAll(p)
+			if err != nil {
+				logrus.Errorf("failed to clean file: %s: %v", p, err)
+			}
+		}
 	}
 }
 
