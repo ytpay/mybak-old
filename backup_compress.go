@@ -46,3 +46,10 @@ func compress() {
 		logrus.Fatal(err)
 	}
 }
+
+func decompress(src,dist string) {
+	err:= archiver.Unarchive(src,dist)
+	if err != nil {
+		logrus.Fatal(err)
+	}
+}

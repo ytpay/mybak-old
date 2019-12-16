@@ -59,6 +59,20 @@ var compressCmd = &cobra.Command{
 	Run:   func(cmd *cobra.Command, args []string) { compress() },
 }
 
+
+var decompressCmd = &cobra.Command{
+	Use:   "decompress",
+	Short: "decompress backup file",
+	Long:  `decompress backup file.`,
+	Run:   func(cmd *cobra.Command, args []string) {
+		if len(args) != 2 {
+			_ = cmd.Help()
+		}else {
+			decompress(args[0],args[1])
+		}
+	},
+}
+
 var versionCmd = &cobra.Command{
 	Use:   "version",
 	Short: "show version",
@@ -77,7 +91,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&FullBackupStorageFile, "full-backup-storage-file", ".full-backup", "full backup storage file")
 	rootCmd.PersistentFlags().StringVar(&IncBackupStorageFile, "inc-backup-storage-file", ".inc-backup", "incremental backup storage file")
 	rootCmd.PersistentFlags().BoolVar(&Debug, "debug", false, "debug mode")
-	rootCmd.AddCommand(fullCmd, incCmd, showCmd, compressCmd, versionCmd)
+	rootCmd.AddCommand(fullCmd, incCmd, showCmd, compressCmd,decompressCmd, versionCmd)
 }
 
 func initLog() {
