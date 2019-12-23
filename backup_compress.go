@@ -57,5 +57,7 @@ func decompress(src, dist string) {
 	err := archiver.Unarchive(src, dist)
 	if err != nil {
 		logrus.Fatal(err)
+	} else {
+		logrus.Info("decompress success")
 	}
 }
