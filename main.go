@@ -11,6 +11,7 @@ var (
 	Host                  string
 	Port                  string
 	Secret                string
+	Comment               string
 	Prefix                string
 	BackupDir             string
 	FullBackupDirTpl      string
@@ -21,8 +22,6 @@ var (
 	Version   string
 	BuildDate string
 	CommitID  string
-
-	compressClean bool
 )
 
 var rootCmd = &cobra.Command{
