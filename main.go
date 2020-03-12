@@ -6,9 +6,11 @@ import (
 )
 
 var (
+	Report                bool
 	User                  string
 	Password              string
-	Threads               int
+	Parallel              int
+	CompressThreads       int
 	Host                  string
 	Port                  int
 	Secret                string
@@ -64,13 +66,15 @@ func init() {
 	cobra.OnInitialize(initLog)
 	rootCmd.PersistentFlags().StringVar(&Host, "host", "127.0.0.1", "mysql host")
 	rootCmd.PersistentFlags().IntVar(&Port, "port", 3306, "mysql port")
-	rootCmd.PersistentFlags().IntVar(&Threads, "threads", 8, "backup thread num")
+	rootCmd.PersistentFlags().IntVar(&Parallel, "parallel", 8, "xtrabackup backup parallel")
+	rootCmd.PersistentFlags().IntVar(&CompressThreads, "compress-threads", 8, "xtrabackup backup compress threads")
 	rootCmd.PersistentFlags().StringVar(&Prefix, "prefix", "mysql", "backup dir prefix")
 	rootCmd.PersistentFlags().StringVar(&BackupDir, "backup-dir", "/data/mysql_backup", "backup dir")
 	rootCmd.PersistentFlags().StringVar(&FullBackupDirTpl, "full-backup-dir-tpl", `{{ .Prefix }}-{{ "20060102150405" | now }}`, "full backup dir template")
 	rootCmd.PersistentFlags().StringVar(&IncBackupDirTpl, "inc-backup-dir-tpl", `{{ .Prefix }}-inc-{{ "20060102150405" | now }}`, "incremental backup dir template")
 	rootCmd.PersistentFlags().StringVar(&FullBackupStorageFile, "full-backup-storage-file", ".full-backup", "full backup storage file")
 	rootCmd.PersistentFlags().StringVar(&IncBackupStorageFile, "inc-backup-storage-file", ".inc-backup", "incremental backup storage file")
+	rootCmd.PersistentFlags().BoolVar(&Report, "report", true, "report backup detail")
 	rootCmd.AddCommand(fullCmd, incCmd, showCmd, versionCmd)
 }
 

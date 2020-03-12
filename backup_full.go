@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -11,10 +12,14 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/cloudfoundry/bytefmt"
+
 	"github.com/sirupsen/logrus"
 )
 
 func fullBackup() {
+
+	startTime := now("2006-01-02 15:04:05")
 
 	targetDirTpl, err := template.New("").Funcs(map[string]interface{}{"now": now}).Parse(FullBackupDirTpl)
 	if err != nil {
@@ -35,8 +40,9 @@ func fullBackup() {
 		"xtrabackup",
 		"--backup",
 		"--dump-innodb-buffer-pool",
+		"--parallel=" + strconv.Itoa(Parallel),
 		"--compress",
-		"--compress-threads=" + strconv.Itoa(Threads),
+		"--compress-threads=" + strconv.Itoa(CompressThreads),
 		"--user=" + User,
 		"--password=" + Password,
 		"--host=" + Host,
@@ -61,6 +67,21 @@ func fullBackup() {
 	if err != nil {
 		logrus.Errorf("failed to storage backup dir: %s", backupDir)
 		logrus.Fatal(err)
+	}
+
+	endTime := now("2006-01-02 15:04:05")
+	if Report {
+		tpl := `%s
+Start Time: %s
+End time: %s
+Backup Size: %s
+Backup Path: %s`
+		banner, _ := base64.StdEncoding.DecodeString(bannerBase64)
+		info, err := os.Stat(backupDir)
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		fmt.Printf(tpl, banner, startTime, endTime, bytefmt.ByteSize(uint64(info.Size())), backupDir)
 	}
 
 }
