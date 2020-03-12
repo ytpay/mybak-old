@@ -11,6 +11,7 @@ import (
 	"strconv"
 	"strings"
 	"text/template"
+	"time"
 
 	"github.com/cloudfoundry/bytefmt"
 
@@ -19,7 +20,7 @@ import (
 
 func incBackup() {
 
-	startTime := now("2006-01-02 15:04:05")
+	startTime := time.Now()
 
 	targetDirTpl, err := template.New("").Funcs(map[string]interface{}{"now": now}).Parse(IncBackupDirTpl)
 	if err != nil {
@@ -101,18 +102,22 @@ func incBackup() {
 		logrus.Fatal(err)
 	}
 
-	endTime := now("2006-01-02 15:04:05")
+	endTime := time.Now()
+	totalTime := endTime.Sub(startTime)
+
 	if Report {
 		tpl := `%s
 Start Time: %s
-End time: %s
+End Time: %s
+Total Time: %s
 Backup Size: %s
-Backup Path: %s`
+Backup Path: %s
+`
 		banner, _ := base64.StdEncoding.DecodeString(bannerBase64)
-		info, err := os.Stat(backupDir)
+		size, err := DirSize(backupDir)
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		fmt.Printf(tpl, banner, startTime, endTime, bytefmt.ByteSize(uint64(info.Size())), backupDir)
+		fmt.Printf(tpl, banner, startTime.Format("2006-01-02 15:04:05"), endTime.Format("2006-01-02 15:04:05"), totalTime, bytefmt.ByteSize(uint64(size)), backupDir)
 	}
 }
