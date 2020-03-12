@@ -8,8 +8,9 @@ import (
 var (
 	User                  string
 	Password              string
+	Threads               int
 	Host                  string
-	Port                  string
+	Port                  int
 	Secret                string
 	Comment               string
 	Prefix                string
@@ -62,7 +63,8 @@ var versionCmd = &cobra.Command{
 func init() {
 	cobra.OnInitialize(initLog)
 	rootCmd.PersistentFlags().StringVar(&Host, "host", "127.0.0.1", "mysql host")
-	rootCmd.PersistentFlags().StringVar(&Port, "port", "3306", "mysql port")
+	rootCmd.PersistentFlags().IntVar(&Port, "port", 3306, "mysql port")
+	rootCmd.PersistentFlags().IntVar(&Threads, "threads", 8, "backup thread num")
 	rootCmd.PersistentFlags().StringVar(&Prefix, "prefix", "mysql", "backup dir prefix")
 	rootCmd.PersistentFlags().StringVar(&BackupDir, "backup-dir", "/data/mysql_backup", "backup dir")
 	rootCmd.PersistentFlags().StringVar(&FullBackupDirTpl, "full-backup-dir-tpl", `{{ .Prefix }}-{{ "20060102150405" | now }}`, "full backup dir template")

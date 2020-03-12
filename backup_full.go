@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -35,11 +36,11 @@ func fullBackup() {
 		"--backup",
 		"--dump-innodb-buffer-pool",
 		"--compress",
-		"--compress-threads=4",
+		"--compress-threads=" + strconv.Itoa(Threads),
 		"--user=" + User,
 		"--password=" + Password,
 		"--host=" + Host,
-		"--port=" + Port,
+		"--port=" + strconv.Itoa(Port),
 		"--target-dir=" + backupDir,
 	}
 

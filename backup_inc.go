@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"text/template"
 
@@ -66,11 +67,11 @@ func incBackup() {
 		"--backup",
 		"--dump-innodb-buffer-pool",
 		"--compress",
-		"--compress-threads=4",
+		"--compress-threads=" + strconv.Itoa(Threads),
 		"--user=" + User,
 		"--password=" + Password,
 		"--host=" + Host,
-		"--port=" + Port,
+		"--port=" + strconv.Itoa(Port),
 		"--incremental-basedir=" + incBaseDir,
 		"--target-dir=" + backupDir,
 	}
