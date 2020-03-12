@@ -22,7 +22,7 @@ func showConfig() {
 		logrus.Infof("mysql user: %s\n", User)
 		logrus.Infof("mysql password: %s\n", Password)
 		logrus.Infof("mysql host: %s\n", Host)
-		logrus.Infof("mysql port: %s\n", Port)
+		logrus.Infof("mysql port: %d\n", Port)
 	} else {
 		logrus.Fatal("go fuck yourself")
 	}
