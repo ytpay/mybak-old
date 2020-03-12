@@ -74,7 +74,8 @@ func fullBackup() {
 	totalTime := endTime.Sub(startTime)
 
 	if Report {
-		tpl := `%s
+		tpl := `
+%s
 Start Time: %s
 End Time: %s
 Total Time: %s
