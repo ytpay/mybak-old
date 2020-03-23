@@ -2,7 +2,6 @@ package main
 
 import (
 	"bytes"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -107,18 +106,29 @@ func incBackup() {
 
 	if Report {
 		tpl := `
-%s
+ __  ____   _____   _   _  __
+|  \/  \ \ / / _ ) /_\ | |/ /
+| |\/| |\ V /| _ \/ _ \| ' < 
+|_|  |_| |_| |___/_/ \_\_|\_\
+
+==============================
 Start Time: %s
 End Time: %s
 Total Time: %s
 Backup Size: %s
 Backup Path: %s
 `
-		banner, _ := base64.StdEncoding.DecodeString(bannerBase64)
 		size, err := DirSize(backupDir)
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		fmt.Printf(tpl, banner, startTime.Format("2006-01-02 15:04:05"), endTime.Format("2006-01-02 15:04:05"), totalTime, bytefmt.ByteSize(uint64(size)), backupDir)
+		s := fmt.Sprintf(tpl, startTime.Format("2006-01-02 15:04:05"), endTime.Format("2006-01-02 15:04:05"), totalTime, bytefmt.ByteSize(uint64(size)), backupDir)
+		fmt.Println(s)
+		if ReportFile != "" {
+			err = ioutil.WriteFile(ReportFile, []byte(s), 0644)
+			if err != nil {
+				logrus.Fatal(err)
+			}
+		}
 	}
 }

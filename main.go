@@ -7,6 +7,7 @@ import (
 
 var (
 	Report                bool
+	ReportFile            string
 	User                  string
 	Password              string
 	Parallel              int
@@ -75,6 +76,7 @@ func init() {
 	rootCmd.PersistentFlags().StringVar(&FullBackupStorageFile, "full-backup-storage-file", ".full-backup", "full backup storage file")
 	rootCmd.PersistentFlags().StringVar(&IncBackupStorageFile, "inc-backup-storage-file", ".inc-backup", "incremental backup storage file")
 	rootCmd.PersistentFlags().BoolVar(&Report, "report", true, "report backup detail")
+	rootCmd.PersistentFlags().StringVar(&ReportFile, "reportfile", "", "report log file")
 	rootCmd.AddCommand(fullCmd, incCmd, showCmd, versionCmd)
 }
 
