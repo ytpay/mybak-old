@@ -63,7 +63,7 @@ func fullBackup() {
 		logrus.Fatal(err)
 	}
 
-	err = ioutil.WriteFile(filepath.Join(BackupDir, FullBackupStorageFile), []byte(backupDir), 0644)
+	err = ioutil.WriteFile(filepath.Join(BackupDir, FullBackupStorageFile), []byte(backupDir+"\n"), 0644)
 	if err != nil {
 		logrus.Errorf("failed to storage backup dir: %s", backupDir)
 		logrus.Fatal(err)
@@ -73,7 +73,12 @@ func fullBackup() {
 	totalTime := endTime.Sub(startTime)
 
 	if Report {
-		tpl := `
+		tpl := ` __  ____   _____   _   _  __
+|  \/  \ \ / / _ ) /_\ | |/ /
+| |\/| |\ V /| _ \/ _ \| ' < 
+|_|  |_| |_| |___/_/ \_\_|\_\
+
+==============================
 Start Time: %s
 End Time: %s
 Total Time: %s
@@ -87,7 +92,7 @@ Backup Path: %s
 		s := fmt.Sprintf(tpl, startTime.Format("2006-01-02 15:04:05"), endTime.Format("2006-01-02 15:04:05"), totalTime, bytefmt.ByteSize(uint64(size)), backupDir)
 		fmt.Println(s)
 		if ReportFile != "" {
-			err = ioutil.WriteFile(ReportFile, []byte(s), 0644)
+			err = ioutil.WriteFile(filepath.Join(BackupDir, ReportFile), []byte(s), 0644)
 			if err != nil {
 				logrus.Fatal(err)
 			}
