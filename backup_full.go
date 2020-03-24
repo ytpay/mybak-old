@@ -92,7 +92,7 @@ Backup Path: %s
 		s := fmt.Sprintf(tpl, startTime.Format("2006-01-02 15:04:05"), endTime.Format("2006-01-02 15:04:05"), totalTime, bytefmt.ByteSize(uint64(size)), backupDir)
 		fmt.Println(s)
 		if ReportFile != "" {
-			err = ioutil.WriteFile(filepath.Join(BackupDir, ReportFile), []byte(s), 0644)
+			err = ioutil.WriteFile(filepath.Join(BackupDir, ReportFile), []byte("```\n"+s+"```"), 0644)
 			if err != nil {
 				logrus.Fatal(err)
 			}
